@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Call Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --danger: #e63946;
+            --warning: #fca311;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --background: #ffffff;
+            --text: #333333;
+            --border: #dee2e6;
+        }
+
+        .dark-mode {
+            --background: #121212;
+            --text: #f8f9fa;
+            --border: #495057;
+            --light: #343a40;
+            --dark: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .card {
+            background-color: var(--light);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .conditional-field {
+            display: none;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background-color: var(--secondary);
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .details-row {
+            display: none;
+        }
+
+        .details-content {
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .phone-link {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .phone-link:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-booked {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .status-sold {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .status-followup {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .status-not-interested {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .toggle-dark {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .editable {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .editable:hover:after {
+            content: '✎';
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .edit-field {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .edit-select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cold Call Management System</h1>
+            <button class="toggle-dark" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <div class="controls">
+            <button class="btn-primary" id="exportBtn">
+                <i class="fas fa-download"></i> Export JSON
+            </button>
+            <button class="btn-secondary" id="importBtn">
+                <i class="fas fa-upload"></i> Import JSON
+            </button>
+            <input type="file" id="jsonFile" accept=".json" style="display: none;">
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by business name, contact, status, caller, or date...">
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span>Add New Lead</span>
+            </div>
+            <div class="card-body">
+                <form id="leadForm">
+                    <div class="form-group">
+                        <label for="businessName">Business Name *</label>
+                        <input type="text" id="businessName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactName">Contact Name *</label>
+                        <input type="text" id="contactName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phoneNumbers">Phone Numbers (comma separated) *</label>
+                        <input type="text" id="phoneNumbers" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="callDateTime">Call Date & Time *</label>
+                        <input type="datetime-local" id="callDateTime" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" required>
+                            <option value="">Select Status</option>
+                            <option value="Booked">Booked</option>
+                            <option value="Asked to call later">Asked to call later</option>
+                            <option value="Sold">Sold</option>
+                            <option value="Hit by non-decision maker">Hit by non-decision maker</option>
+                            <option value="Wants to start">Wants to start</option>
+                            <option value="Downpayment received">Downpayment received</option>
+                            <option value="Not interested">Not interested</option>
+                            <option value="Follow-up scheduled">Follow-up scheduled</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="callerName">Caller Name *</label>
+                        <input type="text" id="callerName" required>
+                    </div>
+                    
+                    <!-- Conditional Fields -->
+                    <div id="conditionalFields">
+                        <div class="conditional-field" id="appointmentDateField">
+                            <label for="appointmentDate">Appointment Date</label>
+                            <input type="datetime-local" id="appointmentDate">
+                        </div>
+                        
+                        <div class="conditional-field" id="suggestedCallTimeField">
+                            <label for="suggestedCallTime">Suggested Call Time</label>
+                            <input type="datetime-local" id="suggestedCallTime">
+                        </div>
+                        
+                        <div class="conditional-field" id="paymentStatusField">
+                            <label for="paymentStatus">Payment Status</label>
+                            <select id="paymentStatus">
+                                <option value="Paid">Paid</option>
+                                <option value="Downpayment">Downpayment</option>
+                                <option value="Full payment">Full payment</option>
+                            </select>
+                        </div>
+                        
+                        <div class="conditional-field" id="amountField">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" step="0.01">
+                        </div>
+                        
+                        <div class="conditional-field" id="paymentMethodField">
+                            <label for="paymentMethod">Payment Method</label>
+                            <select id="paymentMethod">
+                                <option value="Credit Card">Credit Card</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="conditional-field" id="decisionMakerField">
+                            <label for="decisionMakerName">Decision Maker Name</label>
+                            <input type="text" id="decisionMakerName">
+                        </div>
+                        
+                        <div class="conditional-field" id="downpaymentDateField">
+                            <label for="expectedDownpaymentDate">Expected Downpayment Date</label>
+                            <input type="date" id="expectedDownpaymentDate">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-success">
+                        <i class="fas fa-plus-circle"></i> Add Lead
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span>Leads Overview</span>
+            </div>
+            <div class="card-body">
+                <table id="leadsTable">
+                    <thead>
+                        <tr>
+                            <th>Business</th>
+                            <th>Contact</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Caller</th>
+                            <th>Date/Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTableBody">
+                        <!-- Table rows will be generated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize leads array from localStorage or empty array
+            let leads = JSON.parse(localStorage.getItem('leads')) || [];
+            
+            // Set current date and time as default
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('callDateTime').value = localDateTime;
+            
+            // Dark mode toggle
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const icon = darkModeToggle.querySelector('i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
+            
+            // Status change handler for conditional fields
+            document.getElementById('status').addEventListener('change', function() {
+                // Hide all conditional fields first
+                document.querySelectorAll('.conditional-field').forEach(field => {
+                    field.style.display = 'none';
+                });
+                
+                // Show relevant fields based on status
+                switch(this.value) {
+                    case 'Booked':
+                        document.getElementById('appointmentDateField').style.display = 'block';
+                        break;
+                    case 'Asked to call later':
+                        document.getElementById('suggestedCallTimeField').style.display = 'block';
+                        break;
+                    case 'Sold':
+                        document.getElementById('paymentStatusField').style.display = 'block';
+                        document.getElementById('amountField').style.display = 'block';
+                        document.getElementById('paymentMethodField').style.display = 'block';
+                        break;
+                    case 'Hit by non-decision maker':
+                        document.getElementById('decisionMakerField').style.display = 'block';
+                        break;
+                    case 'Wants to start':
+                        document.getElementById('downpaymentDateField').style.display = 'block';
+                        break;
+                    case 'Downpayment received':
+                        document.getElementById('amountField').style.display = 'block';
+                        document.getElementById('paymentMethodField').style.display = 'block';
+                        break;
+                    case 'Not interested':
+                        // Notes field is always visible
+                        break;
+                }
+            });
+            
+            // Form submission handler
+            document.getElementById('leadForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const lead = {
+                    id: Date.now(), // Unique ID
+                    businessName: document.getElementById('businessName').value,
+                    contactName: document.getElementById('contactName').value,
+                    phoneNumbers: document.getElementById('phoneNumbers').value.split(',').map(num => num.trim()),
+                    callDateTime: document.getElementById('callDateTime').value,
+                    status: document.getElementById('status').value,
+                    callerName: document.getElementById('callerName').value,
+                    notes: document.getElementById('notes').value,
+                    // Conditional fields
+                    appointmentDate: document.getElementById('appointmentDate').value,
+                    suggestedCallTime: document.getElementById('suggestedCallTime').value,
+                    paymentStatus: document.getElementById('paymentStatus').value,
+                    amount: document.getElementById('amount').value,
+                    paymentMethod: document.getElementById('paymentMethod').value,
+                    decisionMakerName: document.getElementById('decisionMakerName').value,
+                    expectedDownpaymentDate: document.getElementById('expectedDownpaymentDate').value
+                };
+                
+                leads.push(lead);
+                localStorage.setItem('leads', JSON.stringify(leads));
+                
+                // Reset form
+                this.reset();
+                document.getElementById('callDateTime').value = localDateTime;
+                document.querySelectorAll('.conditional-field').forEach(field => {
+                    field.style.display = 'none';
+                });
+                
+                renderLeadsTable();
+                
+                alert('Lead added successfully!');
+            });
+            
+            // Export functionality
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                const dataStr = JSON.stringify(leads);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = 'leads.json';
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            });
+            
+            // Import functionality
+            document.getElementById('importBtn').addEventListener('click', function() {
+                document.getElementById('jsonFile').click();
+            });
+            
+            document.getElementById('jsonFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedLeads = JSON.parse(e.target.result);
+                        if (Array.isArray(importedLeads)) {
+                            leads = importedLeads;
+                            localStorage.setItem('leads', JSON.stringify(leads));
+                            renderLeadsTable();
+                            alert('Leads imported successfully!');
+                        } else {
+                            throw new Error('Invalid JSON format');
+                        }
+                    } catch (error) {
+                        alert('Error importing JSON: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+            
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function() {
+                renderLeadsTable();
+            });
+            
+            // Make table cell editable
+            function makeEditable(cell, lead, property, type = 'text') {
+                cell.classList.add('editable');
+                cell.addEventListener('click', function() {
+                    const currentValue = lead[property];
+                    let inputElement;
+                    
+                    if (type === 'select') {
+                        inputElement = document.createElement('select');
+                        inputElement.className = 'edit-select';
+                        
+                        const statusOptions = [
+                            'Booked', 'Asked to call later', 'Sold', 
+                            'Hit by non-decision maker', 'Wants to start', 
+                            'Downpayment received', 'Not interested', 'Follow-up scheduled'
+                        ];
+                        
+                        statusOptions.forEach(option => {
+                            const optElement = document.createElement('option');
+                            optElement.value = option;
+                            optElement.textContent = option;
+                            if (option === currentValue) {
+                                optElement.selected = true;
+                            }
+                            inputElement.appendChild(optElement);
+                        });
+                    } else {
+                        inputElement = document.createElement('input');
+                        inputElement.type = type;
+                        inputElement.className = 'edit-field';
+                        inputElement.value = Array.isArray(currentValue) ? currentValue.join(', ') : currentValue;
+                    }
+                    
+                    cell.textContent = '';
+                    cell.appendChild(inputElement);
+                    inputElement.focus();
+                    
+                    function saveChanges() {
+                        let newValue;
+                        
+                        if (type === 'select') {
+                            newValue = inputElement.value;
+                        } else {
+                            newValue = type === 'tel' ? 
+                                inputElement.value.split(',').map(num => num.trim()) : 
+                                inputElement.value;
+                        }
+                        
+                        lead[property] = newValue;
+                        localStorage.setItem('leads', JSON.stringify(leads));
+                        
+                        if (type === 'select') {
+                            cell.textContent = newValue;
+                        } else if (type === 'tel') {
+                            cell.innerHTML = newValue.map(num => 
+                                `<a href="tel:${num}" class="phone-link">${num}</a>`
+                            ).join(', ');
+                        } else {
+                            cell.textContent = newValue;
+                        }
+                        
+                        // Re-add the editable class and event listener
+                        cell.classList.add('editable');
+                        makeEditable(cell, lead, property, type);
+                    }
+                    
+                    inputElement.addEventListener('blur', saveChanges);
+                    inputElement.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            saveChanges();
+                        } else if (e.key === 'Escape') {
+                            if (type === 'select') {
+                                cell.textContent = currentValue;
+                            } else if (type === 'tel') {
+                                cell.innerHTML = currentValue.map(num => 
+                                    `<a href="tel:${num}" class="phone-link">${num}</a>`
+                                ).join(', ');
+                            } else {
+                                cell.textContent = currentValue;
+                            }
+                            makeEditable(cell, lead, property, type);
+                        }
+                    });
+                });
+            }
+            
+            // Render leads table
+            function renderLeadsTable() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const tableBody = document.getElementById('leadsTableBody');
+                tableBody.innerHTML = '';
+                
+                const filteredLeads = leads.filter(lead => {
+                    return (
+                        lead.businessName.toLowerCase().includes(searchTerm) ||
+                        lead.contactName.toLowerCase().includes(searchTerm) ||
+                        lead.status.toLowerCase().includes(searchTerm) ||
+                        lead.callerName.toLowerCase().includes(searchTerm) ||
+                        lead.callDateTime.toLowerCase().includes(searchTerm)
+                    );
+                });
+                
+                if (filteredLeads.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No leads found</td></tr>';
+                    return;
+                }
+                
+                filteredLeads.forEach(lead => {
+                    const row = document.createElement('tr');
+                    
+                    // Format phone numbers with tel links
+                    const phoneLinks = lead.phoneNumbers.map(num => 
+                        `<a href="tel:${num}" class="phone-link">${num}</a>`
+                    ).join(', ');
+                    
+                    // Status badge
+                    const statusClass = 
+                        lead.status === 'Booked' ? 'status-booked' :
+                        lead.status === 'Sold' || lead.status === 'Downpayment received' ? 'status-sold' :
+                        lead.status === 'Asked to call later' || lead.status === 'Follow-up scheduled' ? 'status-followup' :
+                        lead.status === 'Not interested' ? 'status-not-interested' : '';
+                    
+                    row.innerHTML = `
+                        <td></td>
+                        <td></td>
+                        <td>${phoneLinks}</td>
+                        <td><span class="status-badge ${statusClass}">${lead.status}</span></td>
+                        <td></td>
+                        <td>${new Date(lead.callDateTime).toLocaleString()}</td>
+                        <td class="action-buttons">
+                            <button class="btn-info action-btn details-btn" data-id="${lead.id}">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                            <button class="btn-danger action-btn delete-btn" data-id="${lead.id}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                    
+                    // Get the cells we need to make editable
+                    const businessCell = row.cells[0];
+                    const contactCell = row.cells[1];
+                    const phoneCell = row.cells[2];
+                    const statusCell = row.cells[3];
+                    const callerCell = row.cells[4];
+                    const dateCell = row.cells[5];
+                    
+                    // Set initial values
+                    businessCell.textContent = lead.businessName;
+                    contactCell.textContent = lead.contactName;
+                    callerCell.textContent = lead.callerName;
+                    
+                    // Make cells editable
+                    makeEditable(businessCell, lead, 'businessName');
+                    makeEditable(contactCell, lead, 'contactName');
+                    makeEditable(phoneCell, lead, 'phoneNumbers', 'tel');
+                    makeEditable(statusCell, lead, 'status', 'select');
+                    makeEditable(callerCell, lead, 'callerName');
+                    
+                    // Add details row
+                    const detailsRow = document.createElement('tr');
+                    detailsRow.className = 'details-row';
+                    detailsRow.id = `details-${lead.id}`;
+                    detailsRow.innerHTML = `
+                        <td colspan="7">
+                            <div class="details-content">
+                                <h3>Details for ${lead.businessName}</h3>
+                                <p><strong>Notes:</strong> ${lead.notes || 'N/A'}</p>
+                                ${lead.appointmentDate ? `<p><strong>Appointment Date:</strong> ${new Date(lead.appointmentDate).toLocaleString()}</p>` : ''}
+                                ${lead.suggestedCallTime ? `<p><strong>Suggested Call Time:</strong> ${new Date(lead.suggestedCallTime).toLocaleString()}</p>` : ''}
+                                ${lead.paymentStatus ? `<p><strong>Payment Status:</strong> ${lead.paymentStatus}</p>` : ''}
+                                ${lead.amount ? `<p><strong>Amount:</strong> $${lead.amount}</p>` : ''}
+                                ${lead.paymentMethod ? `<p><strong>Payment Method:</strong> ${lead.paymentMethod}</p>` : ''}
+                                ${lead.decisionMakerName ? `<p><strong>Decision Maker:</strong> ${lead.decisionMakerName}</p>` : ''}
+                                ${lead.expectedDownpaymentDate ? `<p><strong>Expected Downpayment Date:</strong> ${new Date(lead.expectedDownpaymentDate).toLocaleDateString()}</p>` : ''}
+                                ${lead.notes && lead.notes.includes('calendar.google.com') ? 
+                                    `<a href="${lead.notes.match(/https:\/\/calendar\.google\.com[^ ]*/)[0]}" target="_blank" class="btn-primary action-btn">
+                                        <i class="fas fa-calendar-plus"></i> Add to Google Calendar
+                                    </a>` : ''}
+                                <div class="form-group" style="margin-top: 15px;">
+                                    <label for="notes-${lead.id}"><strong>Edit Notes:</strong></label>
+                                    <textarea id="notes-${lead.id}" rows="3" style="width: 100%;">${lead.notes || ''}</textarea>
+                                    <button class="btn-info action-btn save-notes-btn" data-id="${lead.id}" style="margin-top: 10px;">
+                                        <i class="fas fa-save"></i> Save Notes
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(detailsRow);
+                    
+                    // Add event listener for saving notes
+                    const saveNotesBtn = detailsRow.querySelector('.save-notes-btn');
+                    saveNotesBtn.addEventListener('click', function() {
+                        const notesTextarea = document.getElementById(`notes-${lead.id}`);
+                        lead.notes = notesTextarea.value;
+                        localStorage.setItem('leads', JSON.stringify(leads));
+                        alert('Notes saved successfully!');
+                    });
+                });
+                
+                // Add event listeners for details and delete buttons
+                document.querySelectorAll('.details-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        const detailsRow = document.getElementById(`details-${id}`);
+                        detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+                    });
+                });
+                
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        if (confirm('Are you sure you want to delete this lead?')) {
+                            leads = leads.filter(lead => lead.id !== id);
+                            localStorage.setItem('leads', JSON.stringify(leads));
+                            renderLeadsTable();
+                        }
+                    });
+                });
+            }
+            
+            // Initial render
+            renderLeadsTable();
+        });
+    </script>
+</body>
+</html>
