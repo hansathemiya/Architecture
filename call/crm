@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #333;
+            --bg-color: #fff;
+            --card-bg: #fff;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary-color: #4895ef;
+            --secondary-color: #4361ee;
+            --success-color: #4cc9f0;
+            --light-color: #121212;
+            --dark-color: #f8f9fa;
+            --text-color: #f8f9fa;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .upload-section {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .upload-label {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-bottom: 15px;
+        }
+
+        .upload-label:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-color);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .business-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .phone {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .rating {
+            display: inline-block;
+            background: var(--success-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-search {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-search:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-map {
+            background: #f72585;
+            color: white;
+        }
+
+        .btn-map:hover {
+            background: #b5179e;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .dark-mode .error-message {
+            background: #2d0b11;
+            color: #f1aeb5;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CRM Dashboard</h1>
+            <button class="theme-toggle" id="theme-toggle">Dark Mode</button>
+        </header>
+
+        <section class="upload-section">
+            <label for="file-input" class="upload-label">Upload CSV File</label>
+            <input type="file" id="file-input" accept=".csv">
+            <p class="file-name" id="file-name">No file selected</p>
+            <div class="error-message" id="error-message"></div>
+        </section>
+
+        <section class="dashboard" id="dashboard">
+            <div class="empty-state">
+                <h2>No Data Loaded</h2>
+                <p>Upload a CSV file to see your data displayed here.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+        const dashboard = document.getElementById('dashboard');
+        const themeToggle = document.getElementById('theme-toggle');
+        const errorMessage = document.getElementById('error-message');
+
+        // Theme Toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            themeToggle.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+            
+            // Save preference to localStorage
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        // Load saved theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.textContent = 'Light Mode';
+        }
+
+        // File Upload Handling
+        fileInput.addEventListener('change', handleFileUpload);
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            fileNameDisplay.textContent = file.name;
+            errorMessage.style.display = 'none';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csvData = parseCSV(e.target.result);
+                    const processedData = processCSVData(csvData);
+                    displayData(processedData);
+                } catch (error) {
+                    showError('Error processing CSV file: ' + error.message);
+                }
+            };
+            reader.onerror = function() {
+                showError('Error reading file');
+            };
+            reader.readAsText(file);
+        }
+
+        // CSV Parsing
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
+            if (lines.length < 2) {
+                throw new Error('CSV file must have at least a header row and one data row');
+            }
+            
+            const headers = lines[0].split(',').map(header => header.trim().toLowerCase());
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(value => value.trim());
+                const row = {};
+                
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                
+                data.push(row);
+            }
+            
+            return data;
+        }
+
+        // Column Detection and Data Processing
+        function processCSVData(data) {
+            if (!data || data.length === 0) return [];
+            
+            // Define possible column name variations
+            const nameVariations = ['name', 'business name', 'company', 'business', 'company name'];
+            const phoneVariations = ['phone', 'phone number', 'contact', 'telephone', 'mobile'];
+            const ratingVariations = ['rating', 'stars', 'score', 'review', 'reviews'];
+            const mapLinkVariations = ['map', 'maps', 'google maps', 'location', 'address'];
+            
+            // Detect actual column names
+            const firstRow = data[0];
+            const columns = {
+                name: detectColumn(firstRow, nameVariations),
+                phone: detectColumn(firstRow, phoneVariations),
+                rating: detectColumn(firstRow, ratingVariations),
+                mapLink: detectColumn(firstRow, mapLinkVariations)
+            };
+            
+            // Process each row
+            return data.map(row => {
+                return {
+                    name: row[columns.name] || 'N/A',
+                    phone: row[columns.phone] || 'N/A',
+                    rating: row[columns.rating] || 'N/A',
+                    mapLink: row[columns.mapLink] || ''
+                };
+            });
+        }
+
+        // Helper function to detect column based on variations
+        function detectColumn(row, variations) {
+            for (const key in row) {
+                if (variations.includes(key.toLowerCase())) {
+                    return key;
+                }
+            }
+            // If no match found, return the first key that contains any of the variation words
+            for (const key in row) {
+                for (const variation of variations) {
+                    if (key.toLowerCase().includes(variation)) {
+                        return key;
+                    }
+                }
+            }
+            // If still no match, return the first key
+            return Object.keys(row)[0] || '';
+        }
+
+        // Display Data in Dashboard
+        function displayData(data) {
+            if (!data || data.length === 0) {
+                dashboard.innerHTML = '<div class="empty-state"><h2>No Valid Data Found</h2><p>The CSV file does not contain recognizable data.</p></div>';
+                return;
+            }
+            
+            dashboard.innerHTML = '';
+            
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const name = document.createElement('h2');
+                name.className = 'business-name';
+                name.textContent = item.name;
+                
+                const phone = document.createElement('p');
+                phone.className = 'phone';
+                phone.textContent = item.phone;
+                
+                const rating = document.createElement('span');
+                rating.className = 'rating';
+                rating.textContent = `Rating: ${item.rating}`;
+                
+                const actions = document.createElement('div');
+                actions.className = 'card-actions';
+                
+                const searchBtn = document.createElement('a');
+                searchBtn.className = 'btn btn-search';
+                searchBtn.textContent = 'Search';
+                searchBtn.href = `https://www.google.com/search?q=${encodeURIComponent(item.name)}`;
+                searchBtn.target = '_blank';
+                
+                const mapBtn = document.createElement('a');
+                mapBtn.className = 'btn btn-map';
+                mapBtn.textContent = 'Map';
+                
+                // Use provided map link if available, otherwise fallback to search
+                if (item.mapLink) {
+                    mapBtn.href = item.mapLink.startsWith('http') ? item.mapLink : `https://www.google.com/maps/search/${encodeURIComponent(item.mapLink)}`;
+                } else {
+                    mapBtn.href = `https://www.google.com/maps/search/${encodeURIComponent(item.name)}`;
+                }
+                mapBtn.target = '_blank';
+                
+                actions.appendChild(searchBtn);
+                actions.appendChild(mapBtn);
+                
+                card.appendChild(name);
+                card.appendChild(phone);
+                card.appendChild(rating);
+                card.appendChild(actions);
+                
+                dashboard.appendChild(card);
+            });
+        }
+
+        // Error Handling
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        // Sample data for demonstration
+        function loadSampleData() {
+            const sampleCSV = `Business Name,Contact,Stars,Google Maps
+Acme Inc,555-1234,4.5,https://goo.gl/maps/abc123
+XYZ Corp,555-5678,3.8,https://goo.gl/maps/def456
+Best Company,555-9012,4.9,`;
+
+            try {
+                const csvData = parseCSV(sampleCSV);
+                const processedData = processCSVData(csvData);
+                displayData(processedData);
+                fileNameDisplay.textContent = 'sample-data.csv (demo)';
+            } catch (error) {
+                console.error('Error loading sample data:', error);
+            }
+        }
+
+        // Load sample data on page load for demonstration
+        window.addEventListener('DOMContentLoaded', loadSampleData);
+    </script>
+</body>
+</html>
