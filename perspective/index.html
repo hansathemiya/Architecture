@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp TXT Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #efeae2;
+      padding: 16px 16px 80px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e1e1e1;
+      display: flex;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .recipient-name {
+      font-weight: 600;
+      font-size: 18px;
+      color: #000;
+    }
+
+    /* Drop area */
+    #drop-area {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #drop-area p {
+      margin: 15px 0;
+      font-size: 18px;
+    }
+
+    #select-btn {
+      padding: 10px 20px;
+      background: #128c7e;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #select-btn:hover {
+      background: #0b6a60;
+    }
+
+    /* Chat */
+    .chat-container {
+      padding-bottom: 70px;
+    }
+
+    .message-row {
+      display: flex;
+      margin: 6px 0;
+    }
+
+    .message-row.me {
+      justify-content: flex-end;
+    }
+
+    .message-row.contact {
+      justify-content: flex-start;
+    }
+
+    .bubble {
+      max-width: 70%;
+      padding: 8px 10px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .me .bubble {
+      background: #dcf8c6;
+      color: #000;
+      border-bottom-right-radius: 4px;
+    }
+
+    .contact .bubble {
+      background: #ffffff;
+      color: #333;
+      border: 1px solid #e1e1e1;
+      border-bottom-left-radius: 4px;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      color: #858a8d;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .edited-label {
+      font-size: 10px;
+      color: #858a8d;
+      text-align: right;
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    .system {
+      text-align: center;
+      color: #66777a;
+      font-size: 13px;
+      margin: 10px 0;
+      font-style: italic;
+    }
+
+    .deleted {
+      font-style: italic;
+      color: #999;
+    }
+
+    /* Search bar */
+    .search-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      padding: 10px 16px;
+      border-top: 1px solid #e1e1e1;
+      display: flex;
+      z-index: 100;
+    }
+
+    #search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #search-input:focus {
+      border-color: #128c7e;
+    }
+
+    #search-btn {
+      margin-left: 10px;
+      padding: 8px 16px;
+      background: #128c7e;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .bubble { font-size: 14px; padding: 7px 9px; }
+      #search-input { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="drop-area">
+    <h2>WhatsApp TXT Viewer</h2>
+    <p>Drag & drop your WhatsApp .txt chat file</p>
+    <p>or</p>
+    <button id="select-btn">Click to Select File</button>
+  </div>
+
+  <div class="header">
+    <div class="recipient-name" id="recipient-name">Chat</div>
+  </div>
+
+  <div class="chat-container" id="chat"></div>
+
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="Search messages..." />
+    <button id="search-btn">🔍</button>
+  </div>
+
+  <script>
+    let allMessages = [];
+    let CURRENT_USER = null;
+    let RECIPIENT = null;
+
+    const dropArea = document.getElementById('drop-area');
+    const chatDiv = document.getElementById('chat');
+    const recipientNameEl = document.getElementById('recipient-name');
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+
+    // Enhanced regex to handle narrow no-break space (\u202f) and optional commas
+    const lineRegex = /^(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4})(?:,)?\s+(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?\s*[-–]\s*(.+)$/;
+
+    function parseLine(line) {
+      // Normalize narrow no-break space and other weird spaces
+      line = line.replace(/\u202f/g, ' ').replace(/\u2009/g, ' ');
+
+      const match = line.match(lineRegex);
+      if (!match) {
+        // Likely a continuation line or system message
+        return { type: 'system', text: line.trim() };
+      }
+
+      const [, date, time, ampm, rest] = match;
+      let sender, text;
+
+      // Split sender and text — only if ": " exists
+      if (rest.includes(': ')) {
+        const idx = rest.indexOf(': ');
+        sender = rest.substring(0, idx).trim();
+        text = rest.substring(idx + 2).trim();
+      } else {
+        // No sender → system message
+        return { type: 'system', text: rest.trim() };
+      }
+
+      // Handle edited messages
+      let edited = false;
+      if (text.endsWith(' (edited)')) {
+        edited = true;
+        text = text.slice(0, -9).trim();
+      }
+
+      // Classify special messages
+      let msgType = 'message';
+      const lowerText = text.toLowerCase();
+
+      if (lowerText === 'this message was deleted') {
+        msgType = 'deleted';
+        text = null;
+      } else if (
+        text === '<Media omitted>' ||
+        (text.startsWith('IMG-') && (text.endsWith('.jpg') || text.endsWith('.jpeg'))) ||
+        (text.startsWith('VID-') && text.endsWith('.mp4'))
+      ) {
+        msgType = 'media';
+        // Keep text as filename or "<Media omitted>"
+      }
+
+      return {
+        type: msgType,
+        sender: sender,
+        text: text,
+        timestamp: `${date}, ${time}${ampm ? ' ' + ampm.toUpperCase() : ''}`,
+        edited: edited
+      };
+    }
+
+    function loadFile(content) {
+      const lines = content.split('\n');
+      allMessages = [];
+
+      // Buffer for multi-line messages
+      let buffer = '';
+      for (let line of lines) {
+        line = line.trim();
+        if (!line) continue;
+
+        // Try to parse line
+        const msg = parseLine(line);
+        if (msg.type !== 'system' || !buffer) {
+          // Finalize buffer if exists
+          if (buffer) {
+            const bufferedMsg = parseLine(buffer);
+            if (bufferedMsg.text || bufferedMsg.type === 'system') {
+              allMessages.push(bufferedMsg);
+            }
+            buffer = '';
+          }
+          if (msg.text || msg.type === 'system') {
+            allMessages.push(msg);
+          }
+        } else {
+          // Multi-line continuation
+          buffer += (buffer ? '\n' : '') + line;
+        }
+      }
+
+      // Handle leftover buffer
+      if (buffer) {
+        const msg = parseLine(buffer);
+        if (msg.text || msg.type === 'system') {
+          allMessages.push(msg);
+        }
+      }
+
+      if (allMessages.length === 0) {
+        alert("No valid messages found.");
+        return;
+      }
+
+      // Get unique senders (excluding system)
+      const senders = [...new Set(
+        allMessages
+          .filter(m => m.sender && m.type === 'message')
+          .map(m => m.sender)
+      )];
+
+      if (senders.length === 0) {
+        alert("No message senders detected.");
+        return;
+      }
+
+      // Ask user to choose perspective
+      if (senders.length === 1) {
+        CURRENT_USER = senders[0];
+        RECIPIENT = 'Unknown Contact';
+      } else {
+        const options = senders.map((s, i) => `${i + 1}. ${s}`).join('\n');
+        const choice = prompt(
+          `Choose your perspective:\n\n${options}\n\nEnter number:`
+        );
+        const idx = parseInt(choice) - 1;
+        if (idx >= 0 && idx < senders.length) {
+          CURRENT_USER = senders[idx];
+          RECIPIENT = senders.find(s => s !== CURRENT_USER) || 'Unknown Contact';
+        } else {
+          alert("Invalid choice. Defaulting to first sender.");
+          CURRENT_USER = senders[0];
+          RECIPIENT = senders[1] || 'Unknown Contact';
+        }
+      }
+
+      recipientNameEl.textContent = RECIPIENT;
+      dropArea.style.display = 'none';
+      renderMessages(allMessages);
+    }
+
+    function renderMessages(messages) {
+      chatDiv.innerHTML = '';
+
+      messages.forEach(msg => {
+        if (msg.type === 'system') {
+          const el = document.createElement('div');
+          el.className = 'system';
+          el.textContent = msg.text;
+          chatDiv.appendChild(el);
+          return;
+        }
+
+        const isMe = msg.sender === CURRENT_USER;
+        const row = document.createElement('div');
+        row.className = `message-row ${isMe ? 'me' : 'contact'}`;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+
+        if (msg.type === 'deleted') {
+          bubble.innerHTML = '<span class="deleted">This message was deleted</span>';
+        } else if (msg.type === 'media') {
+          bubble.textContent = msg.text || '<Media omitted>';
+        } else {
+          bubble.textContent = msg.text;
+        }
+
+        if (msg.edited) {
+          const editEl = document.createElement('div');
+          editEl.className = 'edited-label';
+          editEl.textContent = 'edited';
+          bubble.appendChild(editEl);
+        }
+
+        const timeEl = document.createElement('div');
+        timeEl.className = 'timestamp';
+        timeEl.textContent = msg.timestamp;
+        bubble.appendChild(timeEl);
+
+        row.appendChild(bubble);
+        chatDiv.appendChild(row);
+      });
+
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    // Drag & drop
+    document.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropArea.style.backgroundColor = 'rgba(0,100,0,0.8)';
+    });
+
+    document.addEventListener('dragleave', () => {
+      dropArea.style.backgroundColor = 'rgba(0,0,0,0.85)';
+    });
+
+    document.addEventListener('drop', e => {
+      e.preventDefault();
+      dropArea.style.backgroundColor = 'rgba(0,0,0,0.85)';
+      const file = e.dataTransfer.files[0];
+      if (!file || !file.name.endsWith('.txt')) {
+        alert("Please drop a .txt file.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => loadFile(reader.result);
+      reader.readAsText(file, 'utf-8');
+    });
+
+    // Click to select
+    document.getElementById('select-btn').addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.txt';
+      input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => loadFile(reader.result);
+        reader.readAsText(file, 'utf-8');
+      };
+      input.click();
+    });
+
+    // Search
+    searchBtn.addEventListener('click', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        renderMessages(allMessages);
+        return;
+      }
+      const filtered = allMessages.filter(m =>
+        (m.text && m.text.toLowerCase().includes(query)) ||
+        (m.sender && m.sender.toLowerCase().includes(query)) ||
+        (m.type === 'system' && m.text.toLowerCase().includes(query))
+      );
+      renderMessages(filtered);
+    });
+
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') searchBtn.click();
+    });
+  </script>
+</body>
+</html>
