@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp TXT Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #efeae2;
+      padding: 16px 16px 80px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e1e1e1;
+      display: flex;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .header:hover {
+      background: #f8f8f8;
+    }
+
+    .profile-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e1e1e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #858a8d;
+      font-weight: bold;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .recipient-info {
+      flex: 1;
+    }
+
+    .recipient-name {
+      font-weight: 600;
+      font-size: 18px;
+      color: #000;
+    }
+
+    .recipient-subtitle {
+      font-size: 12px;
+      color: #858a8d;
+      margin-top: 2px;
+    }
+
+    /* Perspective modal */
+    #perspective-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 90%;
+      width: 350px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      padding: 16px;
+      border-bottom: 1px solid #eaeaea;
+      font-weight: 600;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .sender-option {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .sender-option:hover {
+      background: #f0f0f0;
+    }
+
+    .sender-option .profile-photo {
+      width: 36px;
+      height: 36px;
+      margin-right: 12px;
+    }
+
+    .sender-option .name {
+      font-size: 16px;
+      color: #000;
+    }
+
+    /* Chat */
+    .chat-container {
+      padding-bottom: 70px;
+    }
+
+    .message-row {
+      display: flex;
+      margin: 6px 0;
+    }
+
+    .message-row.me {
+      justify-content: flex-end;
+    }
+
+    .message-row.contact {
+      justify-content: flex-start;
+    }
+
+    .bubble {
+      max-width: 70%;
+      padding: 8px 10px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .me .bubble {
+      background: #dcf8c6;
+      color: #000;
+      border-bottom-right-radius: 4px;
+    }
+
+    .contact .bubble {
+      background: #ffffff;
+      color: #333;
+      border: 1px solid #e1e1e1;
+      border-bottom-left-radius: 4px;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      color: #858a8d;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .edited-label {
+      font-size: 10px;
+      color: #858a8d;
+      text-align: right;
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    .system {
+      text-align: center;
+      color: #66777a;
+      font-size: 13px;
+      margin: 10px 0;
+      font-style: italic;
+    }
+
+    .deleted {
+      font-style: italic;
+      color: #999;
+    }
+
+    /* Drop area */
+    #drop-area {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #select-btn {
+      padding: 10px 20px;
+      background: #128c7e;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #select-btn:hover {
+      background: #0b6a60;
+    }
+
+    /* Search bar */
+    .search-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      padding: 10px 16px;
+      border-top: 1px solid #e1e1e1;
+      display: flex;
+      z-index: 100;
+    }
+
+    #search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    #search-btn {
+      margin-left: 10px;
+      padding: 8px 16px;
+      background: #128c7e;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .bubble { font-size: 14px; padding: 7px 9px; }
+      #search-input { font-size: 14px; }
+      .modal-content { width: 90%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="drop-area">
+    <h2>WhatsApp TXT Viewer</h2>
+    <p>Drag & drop your WhatsApp .txt chat file</p>
+    <p>or</p>
+    <button id="select-btn">Click to Select File</button>
+  </div>
+
+  <div class="header" id="header">
+    <div class="profile-photo" id="header-photo">👤</div>
+    <div class="recipient-info">
+      <div class="recipient-name" id="recipient-name">Chat</div>
+      <div class="recipient-subtitle" id="recipient-subtitle">Click to change</div>
+    </div>
+  </div>
+
+  <div class="chat-container" id="chat"></div>
+
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="Search messages..." />
+    <button id="search-btn">🔍</button>
+  </div>
+
+  <!-- Perspective Modal -->
+  <div id="perspective-modal">
+    <div class="modal-content">
+      <div class="modal-header">Choose Your Perspective</div>
+      <div id="sender-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let allMessages = [];
+    let CURRENT_USER = null;
+    let uniqueSenders = [];
+
+    const dropArea = document.getElementById('drop-area');
+    const chatDiv = document.getElementById('chat');
+    const header = document.getElementById('header');
+    const recipientNameEl = document.getElementById('recipient-name');
+    const recipientSubtitleEl = document.getElementById('recipient-subtitle');
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const modal = document.getElementById('perspective-modal');
+    const senderList = document.getElementById('sender-list');
+
+    // Regex to parse WhatsApp lines
+    const lineRegex = /^(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4})(?:,)?\s+(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?\s*[-–]\s*(.+)$/;
+
+    function parseLine(line) {
+      line = line.replace(/\u202f/g, ' ').replace(/\u2009/g, ' ');
+      const match = line.match(lineRegex);
+      if (!match) {
+        return { type: 'system', text: line.trim() };
+      }
+
+      const [, date, time, ampm, rest] = match;
+      let sender, text;
+
+      if (rest.includes(': ')) {
+        const idx = rest.indexOf(': ');
+        sender = rest.substring(0, idx).trim();
+        text = rest.substring(idx + 2).trim();
+      } else {
+        return { type: 'system', text: rest.trim() };
+      }
+
+      let edited = false;
+      if (text.endsWith(' (edited)')) {
+        edited = true;
+        text = text.slice(0, -9).trim();
+      }
+
+      let msgType = 'message';
+      const lowerText = text.toLowerCase();
+      if (lowerText === 'this message was deleted') {
+        msgType = 'deleted';
+        text = null;
+      } else if (
+        text === '<Media omitted>' ||
+        (text.startsWith('IMG-') && (text.endsWith('.jpg') || text.endsWith('.jpeg'))) ||
+        (text.startsWith('VID-') && text.endsWith('.mp4'))
+      ) {
+        msgType = 'media';
+      }
+
+      return {
+        type: msgType,
+        sender: sender,
+        text: text,
+        timestamp: `${date}, ${time}${ampm ? ' ' + ampm.toUpperCase() : ''}`,
+        edited: edited
+      };
+    }
+
+    function loadFile(content) {
+      const lines = content.split('\n');
+      allMessages = [];
+      let buffer = '';
+
+      for (let line of lines) {
+        line = line.trim();
+        if (!line) continue;
+
+        const msg = parseLine(line);
+        if (msg.type !== 'system' || !buffer) {
+          if (buffer) {
+            const bufferedMsg = parseLine(buffer);
+            if (bufferedMsg.text || bufferedMsg.type === 'system') {
+              allMessages.push(bufferedMsg);
+            }
+            buffer = '';
+          }
+          if (msg.text || msg.type === 'system') {
+            allMessages.push(msg);
+          }
+        } else {
+          buffer += (buffer ? '\n' : '') + line;
+        }
+      }
+
+      if (buffer) {
+        const msg = parseLine(buffer);
+        if (msg.text || msg.type === 'system') {
+          allMessages.push(msg);
+        }
+      }
+
+      if (allMessages.length === 0) {
+        alert("No valid messages found.");
+        return;
+      }
+
+      // Get unique senders
+      const sendersSet = new Set(
+        allMessages
+          .filter(m => m.sender && m.type === 'message')
+          .map(m => m.sender)
+      );
+      uniqueSenders = Array.from(sendersSet);
+
+      if (uniqueSenders.length === 0) {
+        alert("No message senders detected.");
+        return;
+      }
+
+      // Default to first sender
+      CURRENT_USER = uniqueSenders[0];
+      updateHeader();
+      dropArea.style.display = 'none';
+      renderMessages(allMessages);
+    }
+
+    function updateHeader() {
+      const others = uniqueSenders.filter(s => s !== CURRENT_USER);
+      const contact = others[0] || 'Chat';
+      recipientNameEl.textContent = contact;
+      recipientSubtitleEl.textContent = `Viewing as: ${CURRENT_USER}`;
+      // Set initial avatar letter
+      const letter = contact.charAt(0).toUpperCase();
+      document.getElementById('header-photo').textContent = letter;
+    }
+
+    function renderMessages(messages) {
+      chatDiv.innerHTML = '';
+
+      messages.forEach(msg => {
+        if (msg.type === 'system') {
+          const el = document.createElement('div');
+          el.className = 'system';
+          el.textContent = msg.text;
+          chatDiv.appendChild(el);
+          return;
+        }
+
+        const isMe = msg.sender === CURRENT_USER;
+        const row = document.createElement('div');
+        row.className = `message-row ${isMe ? 'me' : 'contact'}`;
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+
+        if (msg.type === 'deleted') {
+          bubble.innerHTML = '<span class="deleted">This message was deleted</span>';
+        } else if (msg.type === 'media') {
+          bubble.textContent = msg.text || '<Media omitted>';
+        } else {
+          bubble.textContent = msg.text;
+        }
+
+        if (msg.edited) {
+          const editEl = document.createElement('div');
+          editEl.className = 'edited-label';
+          editEl.textContent = 'edited';
+          bubble.appendChild(editEl);
+        }
+
+        const timeEl = document.createElement('div');
+        timeEl.className = 'timestamp';
+        timeEl.textContent = msg.timestamp;
+        bubble.appendChild(timeEl);
+
+        row.appendChild(bubble);
+        chatDiv.appendChild(row);
+      });
+
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    // Click header to open modal
+    header.addEventListener('click', () => {
+      if (uniqueSenders.length <= 1) return;
+
+      senderList.innerHTML = '';
+      uniqueSenders.forEach(sender => {
+        const option = document.createElement('div');
+        option.className = 'sender-option';
+        const letter = sender.charAt(0).toUpperCase();
+        option.innerHTML = `
+          <div class="profile-photo">${letter}</div>
+          <div class="name">${sender}</div>
+        `;
+        option.addEventListener('click', () => {
+          CURRENT_USER = sender;
+          updateHeader();
+          renderMessages(allMessages);
+          modal.style.display = 'none';
+        });
+        senderList.appendChild(option);
+      });
+
+      modal.style.display = 'flex';
+    });
+
+    // Close modal on outside click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Drag & drop
+    document.addEventListener('dragover', e => { e.preventDefault(); });
+    document.addEventListener('drop', e => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (!file || !file.name.endsWith('.txt')) return;
+      const reader = new FileReader();
+      reader.onload = () => loadFile(reader.result);
+      reader.readAsText(file, 'utf-8');
+    });
+
+    // Click to select
+    document.getElementById('select-btn').addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.txt';
+      input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => loadFile(reader.result);
+        reader.readAsText(file, 'utf-8');
+      };
+      input.click();
+    });
+
+    // Search
+    searchBtn.addEventListener('click', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = query
+        ? allMessages.filter(m =>
+            (m.text && m.text.toLowerCase().includes(query)) ||
+            (m.sender && m.sender.toLowerCase().includes(query)) ||
+            (m.type === 'system' && m.text.toLowerCase().includes(query))
+          )
+        : allMessages;
+      renderMessages(filtered);
+    });
+
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') searchBtn.click();
+    });
+  </script>
+</body>
+</html>
