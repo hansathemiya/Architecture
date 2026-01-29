@@ -1,0 +1,314 @@
+{
+  "tailors": [
+    {
+      "id": 1001,
+      "name": "Elite Stitching",
+      "area": "Main Street",
+      "city": "Colombo",
+      "services": [
+        "Saree Fitting",
+        "Custom Suits",
+        "Womens Clothing"
+      ],
+      "phone": "94755357931",
+      "whatsapp": "94748382125",
+      "profile_url": "colombo1001.tailors.lk",
+      "email": "elite@colombo.lk",
+      "rating": 4.4,
+      "review_count": 7,
+      "experience": "intermediate",
+      "experience_years": 26,
+      "price_range": "premium",
+      "availability": "week",
+      "description": "Professional tailoring services in Colombo specializing in Fusion Wear, Kandyan Traditional. Quality craftsmanship with attention to detail.",
+      "specializations": [
+        "Fusion Wear",
+        "Kandyan Traditional",
+        "Children's Fashion"
+      ],
+      "fabric_options": [
+        "Satin",
+        "Premium Imported Fabrics",
+        "Georgette",
+        "Denim",
+        "Wool"
+      ],
+      "turnaround_time": "8 days",
+      "languages": [
+        "English",
+        "Tamil"
+      ],
+      "address": "694 Main St, Main Street, Colombo",
+      "latitude": 7.8064,
+      "longitude": 79.6865,
+      "opening_hours": {
+        "monday": "9:00 AM - 7:00 PM",
+        "tuesday": "9:00 AM - 7:00 PM",
+        "wednesday": "9:00 AM - 7:00 PM",
+        "thursday": "9:00 AM - 7:00 PM",
+        "friday": "9:00 AM - 7:00 PM",
+        "saturday": "9:00 AM - 2:00 PM",
+        "sunday": "Closed"
+      },
+      "payment_methods": [
+        "Cash"
+      ],
+      "photos": [
+        "tailor1001_shop.jpg",
+        "tailor1001_work.jpg"
+      ],
+      "featured": false,
+      "verified": false,
+      "join_date": "2025-11-30"
+    },
+    {
+      "id": 1002,
+      "name": "Golden Tailors",
+      "area": "New Town",
+      "city": "Ampara",
+      "services": [
+        "Batik",
+        "Leather Repair",
+        "Western Wear"
+      ],
+      "phone": "94716523324",
+      "whatsapp": "94771993463",
+      "profile_url": "ampara1002.tailors.lk",
+      "email": "golden@ampara.lk",
+      "rating": 4.4,
+      "review_count": 59,
+      "experience": "intermediate",
+      "experience_years": 13,
+      "price_range": "moderate",
+      "availability": "today",
+      "description": "Professional tailoring services in Ampara specializing in Party Wear, Kandyan Traditional. Quality craftsmanship with attention to detail.",
+      "specializations": [
+        "Party Wear",
+        "Kandyan Traditional",
+        "Corporate Wear"
+      ],
+      "fabric_options": [
+        "Crepe",
+        "Wool",
+        "Silk",
+        "Khadi"
+      ],
+      "turnaround_time": "13 days",
+      "languages": [
+        "Tamil",
+        "Sinhala"
+      ],
+      "address": "180 Temple Rd, New Town, Ampara",
+      "latitude": 6.923,
+      "longitude": 80.2477,
+      "opening_hours": {
+        "monday": "7:00 AM - 5:00 PM",
+        "tuesday": "7:00 AM - 5:00 PM",
+        "wednesday": "7:00 AM - 5:00 PM",
+        "thursday": "7:00 AM - 5:00 PM",
+        "friday": "7:00 AM - 5:00 PM",
+        "saturday": "7:00 AM - 2:00 PM",
+        "sunday": "7:00 AM - 5:00 PM"
+      },
+      "payment_methods": [
+        "Cash",
+        "Credit Card"
+      ],
+      "photos": [
+        "tailor1002_shop.jpg",
+        "tailor1002_work.jpg"
+      ],
+      "featured": true,
+      "verified": false,
+      "join_date": "2025-09-08"
+    },
+    {
+      "id": 1003,
+      "name": "Traditional Atelier",
+      "area": "Airport Road",
+      "city": "Maharagama",
+      "services": [
+        "Children's Wear",
+        "Embroidery",
+        "Alterations"
+      ],
+      "phone": "94749088859",
+      "whatsapp": "94700703072",
+      "profile_url": "maharagama1003.tailors.lk",
+      "email": "traditional@maharagama.lk",
+      "rating": 3.9,
+      "review_count": 25,
+      "experience": "expert",
+      "experience_years": 30,
+      "price_range": "premium",
+      "availability": "month",
+      "description": "Professional tailoring services in Maharagama specializing in Formal Wear. Quality craftsmanship with attention to detail.",
+      "specializations": [
+        "Formal Wear",
+        "Wedding Attire",
+        "Corporate Wear"
+      ],
+      "fabric_options": [
+        "Silk",
+        "Wool",
+        "Crepe",
+        "Velvet"
+      ],
+      "turnaround_time": "15 days",
+      "languages": [
+        "Sinhala",
+        "English"
+      ],
+      "address": "345 Airport Rd, Airport Road, Maharagama",
+      "latitude": 6.8825,
+      "longitude": 79.9183,
+      "opening_hours": {
+        "monday": "8:00 AM - 6:00 PM",
+        "tuesday": "8:00 AM - 6:00 PM",
+        "wednesday": "8:00 AM - 6:00 PM",
+        "thursday": "8:00 AM - 6:00 PM",
+        "friday": "8:00 AM - 6:00 PM",
+        "saturday": "8:00 AM - 2:00 PM",
+        "sunday": "Closed"
+      },
+      "payment_methods": [
+        "Cash",
+        "Bank Transfer",
+        "Credit Card"
+      ],
+      "photos": [
+        "tailor1003_shop.jpg",
+        "tailor1003_work.jpg"
+      ],
+      "featured": false,
+      "verified": true,
+      "join_date": "2025-11-04"
+    },
+    {
+      "id": 1004,
+      "name": "Royal Designs",
+      "area": "Industrial Zone",
+      "city": "Matara",
+      "services": [
+        "Alterations",
+        "Western Wear",
+        "Traditional Wear",
+        "Saree Fitting"
+      ],
+      "phone": "94714771520",
+      "whatsapp": "94723653217",
+      "profile_url": "matara1004.tailors.lk",
+      "email": "royal@matara.lk",
+      "rating": 4.4,
+      "review_count": 41,
+      "experience": "expert",
+      "experience_years": 15,
+      "price_range": "budget",
+      "availability": "week",
+      "description": "Professional tailoring services in Matara specializing in Party Wear. Quality craftsmanship with attention to detail.",
+      "specializations": [
+        "Party Wear",
+        "Western Wear",
+        "Traditional Wear"
+      ],
+      "fabric_options": [
+        "Silk",
+        "Satin",
+        "Khadi",
+        "Velvet",
+        "Rayon"
+      ],
+      "turnaround_time": "12 days",
+      "languages": [
+        "Tamil",
+        "Sinhala"
+      ],
+      "address": "179 Galle Rd, Industrial Zone, Matara",
+      "latitude": 6.9386,
+      "longitude": 80.2275,
+      "opening_hours": {
+        "monday": "9:00 AM - 6:00 PM",
+        "tuesday": "9:00 AM - 6:00 PM",
+        "wednesday": "9:00 AM - 6:00 PM",
+        "thursday": "9:00 AM - 6:00 PM",
+        "friday": "9:00 AM - 6:00 PM",
+        "saturday": "9:00 AM - 1:00 PM",
+        "sunday": "Closed"
+      },
+      "payment_methods": [
+        "Cash",
+        "Bank Transfer"
+      ],
+      "photos": [
+        "tailor1004_shop.jpg",
+        "tailor1004_work.jpg"
+      ],
+      "featured": false,
+      "verified": false,
+      "join_date": "2025-01-09"
+    },
+    {
+      "id": 1005,
+      "name": "Modern Tailors",
+      "area": "Market Area",
+      "city": "Kandy",
+      "services": [
+        "Custom Suits",
+        "Formal Wear",
+        "Wedding Wear"
+      ],
+      "phone": "94758244216",
+      "whatsapp": "94758244216",
+      "profile_url": "kandy1005.tailors.lk",
+      "email": "modern@kandy.lk",
+      "rating": 4.2,
+      "review_count": 32,
+      "experience": "intermediate",
+      "experience_years": 18,
+      "price_range": "moderate",
+      "availability": "week",
+      "description": "Professional tailoring services in Kandy specializing in Modern Design, Corporate Wear. Quality craftsmanship with attention to detail.",
+      "specializations": [
+        "Modern Design",
+        "Corporate Wear",
+        "Wedding Attire"
+      ],
+      "fabric_options": [
+        "Silk",
+        "Crepe",
+        "Wool",
+        "Chiffon"
+      ],
+      "turnaround_time": "10 days",
+      "languages": [
+        "English",
+        "Sinhala",
+        "Tamil"
+      ],
+      "address": "73 Temple Rd, Market Area, Kandy",
+      "latitude": 7.2906,
+      "longitude": 80.6337,
+      "opening_hours": {
+        "monday": "8:00 AM - 6:00 PM",
+        "tuesday": "8:00 AM - 6:00 PM",
+        "wednesday": "8:00 AM - 6:00 PM",
+        "thursday": "8:00 AM - 6:00 PM",
+        "friday": "8:00 AM - 6:00 PM",
+        "saturday": "8:00 AM - 2:00 PM",
+        "sunday": "Closed"
+      },
+      "payment_methods": [
+        "Cash",
+        "Credit Card",
+        "Debit Card"
+      ],
+      "photos": [
+        "tailor1005_shop.jpg",
+        "tailor1005_work.jpg"
+      ],
+      "featured": true,
+      "verified": true,
+      "join_date": "2024-02-05"
+    }
+  ]
+}
