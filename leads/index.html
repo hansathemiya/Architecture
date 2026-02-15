@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead List</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            line-height: 1.4;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .last-updated {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-update {
+            background-color: #fff3cd;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .status-change {
+            background-color: #d4edda;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 0.9rem;
+        }
+        
+        .phone-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            padding: 4px 0;
+        }
+        
+        .phone-link:hover, .phone-link:focus {
+            text-decoration: underline;
+        }
+        
+        .priority-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        .priority-high { background-color: #28a745; } /* Green */
+        .priority-medium { background-color: #fd7e14; } /* Orange */
+        .priority-low { background-color: #dc3545; } /* Red */
+        
+        /* Column widths */
+        .col-business { width: 35%; }
+        .col-phone { width: 20%; }
+        .col-site { width: 15%; }
+        .col-priority { width: 10%; }
+        .col-status { width: 20%; }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+                font-size: 0.85rem;
+            }
+            
+            th {
+                font-size: 0.8rem;
+            }
+            
+            /* Adjust column widths for mobile */
+            .col-business { width: 30%; }
+            .col-phone { width: 25%; }
+            .col-site { width: 15%; }
+            .col-priority { width: 10%; }
+            .col-status { width: 20%; }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2rem;
+            }
+            
+            th, td {
+                padding: 7px 4px;
+                font-size: 0.8rem;
+            }
+            
+            select {
+                padding: 6px;
+                font-size: 0.85rem;
+            }
+            
+            /* Further adjust for very small screens */
+            .col-business { width: 28%; }
+            .col-phone { width: 27%; }
+            .col-site { width: 15%; }
+            .col-priority { width: 10%; }
+            .col-status { width: 20%; }
+        }
+        
+        /* Hide form visually but keep accessible */
+        form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lead List</h1>
+        <p class="last-updated">Last updated: <span id="lastUpdate"></span></p>
+        
+        <div id="statusMessage" class="status-update"></div>
+        
+        <table id="leadsTable">
+            <thead>
+                <tr>
+                    <th class="col-business">Business</th>
+                    <th class="col-phone">Phone</th>
+                    <th class="col-site">Site Status</th>
+                    <th class="col-priority">Priority</th>
+                    <th class="col-status">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <form id="statusForm" action="https://formsubmit.co/elvariente@proton.me" method="POST" target="hiddenFrame" rel="noreferrer noopener">
+        <input type="hidden" name="business_name" id="businessNameInput">
+        <input type="hidden" name="old_status" id="oldStatusInput">
+        <input type="hidden" name="new_status" id="newStatusInput">
+        <input type="hidden" name="timestamp" id="timestampInput">
+        <input type="hidden" name="_subject" value="Lead Status Update">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+    </form>
+    
+    <iframe name="hiddenFrame" style="display:none;"></iframe>
+
+    <script>
+        const leadsData = [
+            {name: "Josiah & Sons Plumbers", phone: "+1 346 239 1950", website: "No site", booking: "No booking", notes: "Competitors have both; strong candidate for $500 starter site", priority: "High"},
+            {name: "H I J Plumbing", phone: "+1 832 603 5604", website: "Unclear", booking: "Unknown", notes: "Only one review from 3 years ago; may not be active", priority: "Low"},
+            {name: "Plumbing Life Houston Home Services", phone: "+1 281 961 5718", website: "No site", booking: "No booking", notes: "Active gap compared to competitors", priority: "Medium"},
+            {name: "Black and White Contracting", phone: "+1 713 550 3839", website: "No site", booking: "No booking", notes: "No reviews; visibility gap", priority: "Medium"},
+            {name: "Truss Plumbing Contractors, Inc", phone: "+1 281 485 2036", website: "No site", booking: "No booking", notes: "No reviews", priority: "Low"},
+            {name: "Friendswood Plumbing Company", phone: "+1 281 482 7111", website: "No site", booking: "No booking", notes: "Has some reviews; more credible", priority: "Medium"},
+            {name: "Optimum Plumbing LLC", phone: "+1 832 244 8190", website: "No site", booking: "No booking", notes: "Has some reviews; more credible", priority: "Medium"},
+            {name: "RG Plumbing, Inc.", phone: "+1 832 969 4101", website: "Old site", booking: "No booking", notes: "Last review years back; may not be active", priority: "Low"},
+            {name: "A‑AFFORDABLE Plumbing", phone: "+1 713 946 1909", website: "No site", booking: "No booking", notes: "Very old reviews; may not be active", priority: "Low"},
+            {name: "Hall Plumbing", phone: "+1 713 748 7172", website: "No site", booking: "No booking", notes: "Very bad reviews, low rating; reputation uplift candidate", priority: "Medium"},
+            {name: "Tank & Tankless Water Heaters S. Houston", phone: "+1 281 215 3726", website: "No site", booking: "No booking", notes: "Has some reviews; most likely exists", priority: "Medium"},
+            {name: "Best Plumbing", phone: "+1 713 697 4400", website: "Old site", booking: "No booking", notes: "Some bad reviews; most likely exists", priority: "Low"},
+            {name: "Sanders Plumbing", phone: "+1 832 557 5744", website: "No site", booking: "No booking", notes: "No reviews yet; needs verification", priority: "Low"},
+            {name: "Texas Express Plumbing Inc", phone: "+1 713 937 1624", website: "No site", booking: "No booking", notes: "No reviews; needs verification", priority: "Low"},
+            {name: "Pegasus Plumbing", phone: "+1 713 988 6061", website: "Down", booking: "No booking", notes: "Browser shows error; likely no functional site", priority: "Medium"},
+            {name: "Precise Plumbing & Air", phone: "+1 832 836 9666", website: "Old (not mobile)", booking: "No booking", notes: "Exists, but site fails on mobile—prime redesign candidate", priority: "High"},
+            {name: "Anderson Plumbing Service", phone: "+1 281 458 6464", website: "No site", booking: "No booking", notes: "Old reviews; may not be active", priority: "Low"},
+            {name: "(Repair) Kitchen & Bathroom Plumbing", phone: "+1 281 401 9874", website: "No site", booking: "No booking", notes: "Old reviews; may not be active", priority: "Low"},
+            {name: "SOS Water Heater Houston (HVAC)", phone: "+1 281 758 8054", website: "Old (2023)", booking: "No booking", notes: "Exists, but site is dated—prime redesign candidate", priority: "High"},
+            {name: "O.P.'S Heating & Air Co.", phone: "+1 713 501 5126", website: "No site", booking: "No booking", notes: "No reviews; needs verification", priority: "Low"},
+            {name: "Heaven Plumbing Services", phone: "+1 281 912 5432", website: "No site", booking: "No booking", notes: "No reviews; needs verification", priority: "Low"},
+            {name: "Houston Heating & Cooling", phone: "+1 346 900 8447", website: "No site", booking: "No booking", notes: "No reviews; needs verification", priority: "Low"},
+            {name: "Charlie's Plumbing, Inc", phone: "+1 713 242 7543", website: "Slow site", booking: "No booking", notes: "Exists, but site performance is poor—prime redesign candidate", priority: "High"},
+            {name: "First Aid Plumbing Specialist INC", phone: "+1 832 279 3065", website: "No site", booking: "No booking", notes: "No reviews; needs verification", priority: "Low"}
+        ];
+
+        // Load saved data from localStorage
+        function loadLeads() {
+            const saved = localStorage.getItem('plumbingLeads');
+            if (saved) {
+                return JSON.parse(saved);
+            } else {
+                // Initialize with default status if no saved data
+                return leadsData.map(lead => ({...lead, status: 'New'}));
+            }
+        }
+
+        // Save data to localStorage
+        function saveLeads(leads) {
+            localStorage.setItem('plumbingLeads', JSON.stringify(leads));
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+        }
+
+        // Populate table
+        function populateTable() {
+            const tbody = document.querySelector('#leadsTable tbody');
+            const leads = loadLeads();
+            
+            tbody.innerHTML = '';
+            
+            leads.forEach((lead, index) => {
+                const row = document.createElement('tr');
+                
+                // Add status change indicator if recently updated
+                if (lead.lastUpdated && new Date() - new Date(lead.lastUpdated) < 30000) { // 30 seconds
+                    row.classList.add('status-change');
+                }
+                
+                // Create priority indicator
+                let priorityClass = '';
+                let priorityTitle = '';
+                switch(lead.priority.toLowerCase()) {
+                    case 'high':
+                        priorityClass = 'priority-high';
+                        priorityTitle = 'High Priority';
+                        break;
+                    case 'medium':
+                        priorityClass = 'priority-medium';
+                        priorityTitle = 'Medium Priority';
+                        break;
+                    case 'low':
+                        priorityClass = 'priority-low';
+                        priorityTitle = 'Low Priority';
+                        break;
+                    default:
+                        priorityClass = 'priority-low';
+                        priorityTitle = 'Low Priority';
+                }
+                
+                row.innerHTML = `
+                    <td class="col-business" style="word-break: break-word; min-width: 100px;">${lead.name}</td>
+                    <td class="col-phone"><a href="tel:${lead.phone}" class="phone-link">${lead.phone}</a></td>
+                    <td class="col-site">${lead.website}</td>
+                    <td class="col-priority" title="${priorityTitle}"><span class="priority-dot ${priorityClass}"></span></td>
+                    <td class="col-status">
+                        <select onchange="updateStatus(${index}, this.value)" aria-label="Update status for ${lead.name}">
+                            <option value="New" ${lead.status === 'New' ? 'selected' : ''}>New</option>
+                            <option value="Contacted" ${lead.status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+                            <option value="Follow Up" ${lead.status === 'Follow Up' ? 'selected' : ''}>Follow Up</option>
+                            <option value="Interested" ${lead.status === 'Interested' ? 'selected' : ''}>Interested</option>
+                            <option value="Not Interested" ${lead.status === 'Not Interested' ? 'selected' : ''}>Not Interested</option>
+                            <option value="Closed" ${lead.status === 'Closed' ? 'selected' : ''}>Closed</option>
+                        </select>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update status and save
+        function updateStatus(index, newStatus) {
+            const leads = loadLeads();
+            const oldStatus = leads[index].status;
+            const businessName = leads[index].name;
+            
+            // Only proceed if status actually changed
+            if (oldStatus !== newStatus) {
+                leads[index].status = newStatus;
+                leads[index].lastUpdated = new Date().toISOString();
+                
+                saveLeads(leads);
+                
+                // Show status message
+                const statusMsg = document.getElementById('statusMessage');
+                statusMsg.textContent = `Updated: ${businessName} - ${oldStatus} → ${newStatus}`;
+                statusMsg.style.display = 'block';
+                setTimeout(() => {
+                    statusMsg.style.display = 'none';
+                }, 3000);
+                
+                // Send notification via FormSubmit
+                sendStatusUpdate(businessName, oldStatus, newStatus);
+            }
+            
+            // Repopulate table to show changes
+            populateTable();
+        }
+
+        // Send status update via FormSubmit
+        function sendStatusUpdate(businessName, oldStatus, newStatus) {
+            // Set form field values
+            document.getElementById('businessNameInput').value = businessName;
+            document.getElementById('oldStatusInput').value = oldStatus;
+            document.getElementById('newStatusInput').value = newStatus;
+            document.getElementById('timestampInput').value = new Date().toLocaleString();
+            
+            // Submit form
+            document.getElementById('statusForm').submit();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
+            populateTable();
+        });
+    </script>
+</body>
+</html>
