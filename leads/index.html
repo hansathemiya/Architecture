@@ -206,6 +206,7 @@
         <input type="hidden" name="business_name" id="businessNameInput">
         <input type="hidden" name="old_status" id="oldStatusInput">
         <input type="hidden" name="new_status" id="newStatusInput">
+        <input type="hidden" name="device_id" id="deviceIdInput">
         <input type="hidden" name="timestamp" id="timestampInput">
         <input type="hidden" name="_subject" value="Lead Status Update">
         <input type="hidden" name="_template" value="table">
@@ -215,6 +216,21 @@
     <iframe name="hiddenFrame" style="display:none;"></iframe>
 
     <script>
+        // Generate a random ID for the device
+        function generateDeviceId() {
+            return 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        }
+
+        // Get or create device ID
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('deviceId');
+            if (!deviceId) {
+                deviceId = generateDeviceId();
+                localStorage.setItem('deviceId', deviceId);
+            }
+            return deviceId;
+        }
+
         const leadsData = [
             {name: "Josiah & Sons Plumbers", phone: "+1 346 239 1950", website: "No site", booking: "No booking", notes: "Competitors have both; strong candidate for $500 starter site", priority: "High"},
             {name: "H I J Plumbing", phone: "+1 832 603 5604", website: "Unclear", booking: "Unknown", notes: "Only one review from 3 years ago; may not be active", priority: "Low"},
@@ -351,6 +367,7 @@
             document.getElementById('businessNameInput').value = businessName;
             document.getElementById('oldStatusInput').value = oldStatus;
             document.getElementById('newStatusInput').value = newStatus;
+            document.getElementById('deviceIdInput').value = getDeviceId(); // Add device ID
             document.getElementById('timestampInput').value = new Date().toLocaleString();
             
             // Submit form
