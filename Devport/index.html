@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dev Port</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2rem;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Container for side-by-side cards */
+    .card-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Side-by-side card layout */
+    .side-by-side {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Individual glass card styling */
+    .glass-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 120px;
+      flex: 1 1 40%;
+      min-width: 200px;
+      border-radius: 15px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      overflow: hidden;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.074);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Hover effects */
+    .glass-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+
+    /* Blur effect for non-hovered cards */
+    .card-container:hover > .side-by-side > .glass-card:not(:hover) {
+      filter: blur(5px);
+      transform: scale(0.95);
+    }
+
+    /* Card content styling */
+    .glass-card .tip {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .glass-card .second-text {
+      font-size: 0.9rem;
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    /* Floating elements for glass effect */
+    .card-container::before,
+    .card-container::after {
+      content: "";
+      position: absolute;
+      background-color: rgba(250, 181, 112, 0.3);
+    }
+
+    .card-container::before {
+      border-radius: 50%;
+      width: 8rem;
+      height: 8rem;
+      top: 30%;
+      right: 7%;
+    }
+
+    .card-container::after {
+      content: "";
+      position: absolute;
+      height: 4rem;
+      top: 8%;
+      right: 5%;
+      border: 1px solid;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .glass-card {
+        height: 100px;
+        min-width: 150px;
+      }
+      
+      .glass-card .tip {
+        font-size: 1.1rem;
+      }
+      
+      .glass-card .second-text {
+        font-size: 0.8rem;
+      }
+      
+      .side-by-side {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Tailors.lk Main</h1>
+  <div class="card-container">
+    <div class="side-by-side">
+      <div class="glass-card">
+        <p class="tip">View Site</p>
+        <p class="second-text">https://tailors.lk</p>
+      </div>
+      <div class="glass-card">
+        <p class="tip">Development Portal</p>
+        <p class="second-text">https://github.com/hansathemiya/tailordev</p>
+      </div>
+    </div>
+  </div>
+
+  <h1>Dev.Tailors.lk (dev server)</h1>
+  <div class="card-container">
+    <div class="side-by-side">
+      <div class="glass-card">
+        <p class="tip">View Site</p>
+        <p class="second-text">https://dev.tailors.lk</p>
+      </div>
+      <div class="glass-card">
+        <p class="tip">Development Portal</p>
+        <p class="second-text">https://github.com/hansathemiya/tailordev</p>
+      </div>
+    </div>
+  </div>
+
+  <h1>Data.Tailors.lk (Data/File Server)</h1>
+  <div class="card-container">
+    <div class="side-by-side">
+      <div class="glass-card">
+        <p class="tip">View Site</p>
+        <p class="second-text">https://data.tailors.lk</p>
+      </div>
+      <div class="glass-card">
+        <p class="tip">Development Portal</p>
+        <p class="second-text">https://github.com/hansathemiya/Tailornew</p>
+      </div>
+    </div>
+  </div>
+
+  <h1>HTML Live Server</h1>
+  <div class="card-container">
+    <div class="side-by-side">
+      <div class="glass-card">
+        <p class="tip">Open Tool</p>
+        <p class="second-text">https://tools.elvariente.com</p>
+      </div>
+      <div class="glass-card">
+        <p class="tip">Development Portal</p>
+        <p class="second-text">https://github.com/hansathemiya/Architecture</p>
+      </div>
+    </div>
+  </div>
+
+  <h1>Qwen(Chat)</h1>
+  <div class="card-container">
+    <div class="side-by-side">
+      <div class="glass-card">
+        <p class="tip">Qwen</p>
+        <p class="second-text">https://chat.qwen.ai</p>
+      </div>
+    </div>
+  </div>
+
+  <h1>Deepseek(Chat)</h1>
+  <div class="card-container">
+    <div class="side-by-side">
+      <div class="glass-card">
+        <p class="tip">Deepseek</p>
+        <p class="second-text">https://chat.deepseek.com</p>
+      </div>
+    </div>
+  </div>
+
+  <h1>Microsoft Copilot</h1>
+  <div class="card-container">
+    <div class="side-by-side">
+      <div class="glass-card">
+        <p class="tip">Copilot Microsoft</p>
+        <p class="second-text">https://copilot.microsoft.com</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
